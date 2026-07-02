@@ -14,3 +14,11 @@ class AnalyzeResponse(BaseModel):
     latency_ms: float
     device: str | None = None
     details: str | None = None
+    detection_source: str | None = Field(
+        default=None,
+        description="Which layer flagged the content: 'ml_model', 'heuristic_pattern', 'both', or 'none'",
+    )
+    matched_patterns: list[str] = Field(
+        default_factory=list,
+        description="Labels of jailbreak heuristic patterns that matched (empty if none)",
+    )
