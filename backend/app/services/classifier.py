@@ -1,7 +1,7 @@
 """Injection classifier (Layer 2).
 
 Loads the RoBERTa model fine-tuned on the BIPIA dataset from HuggingFace Hub
-(default: DegreeJr/singkap-ai-roberta) via a transformers pipeline. Runs on GPU
+(default: DegreeJr/promptprotect-roberta) via a transformers pipeline. Runs on GPU
 (CUDA) when available, otherwise falls back to CPU.
 
 Binary classifier: label 0 = benign/safe, 1 = malicious/injection.
@@ -28,7 +28,7 @@ def _get_pipeline():
     device = 0 if torch.cuda.is_available() else -1
     return pipeline(
         task="text-classification",
-        model=settings.hf_model_id or "DegreeJr/singkap-ai-roberta",
+        model=settings.hf_model_id or "DegreeJr/promptprotect-roberta",
         device=device,
         truncation=True,
         max_length=512,

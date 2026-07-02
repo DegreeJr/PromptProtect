@@ -70,7 +70,7 @@ async def analyze(request: AnalyzeRequest, db: Session = Depends(get_db)) -> Ana
         spotlighted_content=spotlighted,
         latency_ms=latency_ms,
         device=get_device(),
-        details="RoBERTa (DegreeJr/singkap-ai-roberta, BIPIA) + heuristik jailbreak langsung.",
+        details="RoBERTa (DegreeJr/promptprotect-roberta, BIPIA) + heuristik jailbreak langsung.",
         detection_source=detection_source,
         matched_patterns=matched_patterns,
     )

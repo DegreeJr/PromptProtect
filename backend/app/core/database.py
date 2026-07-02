@@ -1,7 +1,7 @@
 """SQLite persistence for detection audit logs (SQLAlchemy 2.0).
 
 Lightweight setup suitable for a hackathon demo: a single SQLite file
-(`singkap.db` in the backend working dir) holding one row per /api/analyze call.
+(`promptprotect.db` in the backend working dir) holding one row per /api/analyze call.
 """
 
 from collections.abc import Generator
@@ -11,7 +11,7 @@ from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 # check_same_thread=False so FastAPI's threadpool can share the connection.
 _engine = create_engine(
-    "sqlite:///./singkap.db",
+    "sqlite:///./promptprotect.db",
     connect_args={"check_same_thread": False},
 )
 

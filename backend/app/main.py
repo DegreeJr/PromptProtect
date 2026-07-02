@@ -27,7 +27,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="Singkap AI",
+    title="PromptProtect",
     description="LLM Prompt Injection Defense Middleware",
     lifespan=lifespan,
 )

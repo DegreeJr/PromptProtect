@@ -1,11 +1,11 @@
-# Singkap AI
+# PromptProtect
 
 **LLM Prompt Injection Defense Middleware** — HackNusa 2026, Track 2 (AI vs AI: Cyber Defense).
 
-Singkap AI melindungi aplikasi berbasis LLM dari serangan *prompt injection* dengan **tiga komponen pertahanan** yang saling melengkapi:
+PromptProtect melindungi aplikasi berbasis LLM dari serangan *prompt injection* dengan **tiga komponen pertahanan** yang saling melengkapi:
 
 1. **Spotlighting (provenance)** — menandai konten tak terpercaya dengan delimiter + datamarking (`<<UNTRUSTED_DATA>>`) agar LLM hilir dapat membedakan data dari instruksi. Ini lapis *provenance*, bukan detektor.
-2. **ML classifier (indirect injection)** — RoBERTa (`DegreeJr/singkap-ai-roberta`) yang di-*fine-tune* pada dataset **BIPIA**, di-*hosting* di HuggingFace Hub, dimuat via `transformers` pipeline. Kuat mendeteksi *indirect prompt injection* (perintah jahat yang tertanam di konten eksternal, mis. eksfiltrasi data).
+2. **ML classifier (indirect injection)** — RoBERTa (`DegreeJr/promptprotect-roberta`) yang di-*fine-tune* pada dataset **BIPIA**, di-*hosting* di HuggingFace Hub, dimuat via `transformers` pipeline. Kuat mendeteksi *indirect prompt injection* (perintah jahat yang tertanam di konten eksternal, mis. eksfiltrasi data).
 3. **Heuristic layer (direct jailbreak)** — daftar pola regex (`services/jailbreak_heuristic.py`) untuk frasa jailbreak *langsung* dalam Bahasa Inggris & Indonesia (mis. "ignore all previous instructions", "you are now DAN", "abaikan instruksi sebelumnya").
 
 > **Kenapa perlu komponen ke-3?** Distribusi data training BIPIA berfokus pada *indirect* prompt injection, sehingga model ML punya *blind spot*: jailbreak langsung generik seperti "Ignore all previous instructions" atau "You are now DAN" konsisten di-skor **benign** dengan keyakinan tinggi (terverifikasi lewat audit). Layer heuristik menutup gap distribusi ini secara deterministik. Kedua detektor digabung dengan **logika OR** — bila salah satu menandai konten sebagai injeksi, verdict akhir = injeksi.
@@ -46,7 +46,7 @@ uvicorn app.main:app --reload --port 8000
 - Logs: `GET http://127.0.0.1:8000/api/logs?limit=50&offset=0` — audit trail request terakhir
 
 ### Analytics & Audit Log
-Setiap panggilan `/api/analyze` dicatat ke SQLite (`backend/singkap.db`, via SQLAlchemy):
+Setiap panggilan `/api/analyze` dicatat ke SQLite (`backend/promptprotect.db`, via SQLAlchemy):
 timestamp, preview input (dipotong 200 char) + hash SHA-256 (privacy-safe), verdict,
 confidence, `detection_source`, dan latency. Frontend menyediakan tab **Dashboard**
 (kartu statistik, bar chart breakdown sumber deteksi, dan tabel audit log).

@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    app_name: str = "Singkap AI"
+    app_name: str = "PromptProtect"
     groq_api_key: str = ""
     hf_model_id: str = ""
 

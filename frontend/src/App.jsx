@@ -95,10 +95,10 @@ function App() {
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 text-lg font-bold text-white shadow-lg shadow-purple-500/30">
-              S
+              P
             </div>
             <div>
-              <h1 className="text-lg font-semibold leading-none text-white">Singkap AI</h1>
+              <h1 className="text-lg font-semibold leading-none text-white">PromptProtect</h1>
               <p className="text-xs text-slate-500">Prompt Injection Defense Middleware</p>
             </div>
           </div>
@@ -251,7 +251,7 @@ function App() {
       )}
 
       <footer className="border-t border-slate-800/80 py-6 text-center text-xs text-slate-600">
-        Singkap AI · Track 2: AI vs AI: Cyber Defense · Spotlighting + RoBERTa (BIPIA) + Heuristik Jailbreak
+        PromptProtect · Track 2: AI vs AI: Cyber Defense · Spotlighting + RoBERTa (BIPIA) + Heuristik Jailbreak
       </footer>
     </div>
   )
