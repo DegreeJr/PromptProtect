@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Dashboard from './Dashboard'
 
 const EXAMPLES = [
   {
@@ -53,6 +54,7 @@ function ConfidenceBar({ value, danger }) {
 }
 
 function App() {
+  const [view, setView] = useState('analyze')
   const [content, setContent] = useState('')
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -100,11 +102,32 @@ function App() {
               <p className="text-xs text-slate-500">Prompt Injection Defense Middleware</p>
             </div>
           </div>
-          <span className="rounded-full border border-purple-500/40 bg-purple-500/10 px-3 py-1 text-xs font-medium text-purple-300">
-            HackNusa 2026 · AI vs AI
-          </span>
+          <div className="flex items-center gap-2">
+            <nav className="flex rounded-lg border border-slate-800 bg-slate-900/60 p-1">
+              {[
+                { id: 'analyze', label: 'Analyze' },
+                { id: 'dashboard', label: 'Dashboard' },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setView(tab.id)}
+                  className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
+                    view === tab.id ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </nav>
+            <span className="hidden rounded-full border border-purple-500/40 bg-purple-500/10 px-3 py-1 text-xs font-medium text-purple-300 sm:inline">
+              HackNusa 2026 · AI vs AI
+            </span>
+          </div>
         </div>
       </header>
+
+      {view === 'dashboard' && <Dashboard />}
+      {view === 'analyze' && (
 
       <main className="mx-auto grid max-w-5xl gap-6 px-6 py-10 lg:grid-cols-2">
         {/* Left: input */}
@@ -112,7 +135,7 @@ function App() {
           <div>
             <h2 className="text-2xl font-semibold text-white">Analisis Konten</h2>
             <p className="mt-1 text-sm text-slate-400">
-              Tempel konten tak terpercaya (email, dokumen, hasil web) untuk dipindai dua lapis pertahanan.
+              Tempel konten tak terpercaya (email, dokumen, hasil web) untuk dipindai tiga lapis pertahanan.
             </p>
           </div>
 
@@ -196,10 +219,18 @@ function App() {
               </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 <Stat label="Latency" value={`${result.latency_ms} ms`} />
                 <Stat label="Verdict" value={danger ? 'BLOCK' : 'ALLOW'} />
+                <Stat label="Sumber" value={result.detection_source ?? '—'} />
               </div>
+
+              {result.matched_patterns?.length > 0 && (
+                <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 text-xs text-amber-300">
+                  <span className="font-semibold uppercase tracking-wider">Pola cocok (Layer 3):</span>{' '}
+                  <span className="font-mono">{result.matched_patterns.join(', ')}</span>
+                </div>
+              )}
 
               {/* Layer 1: spotlighting */}
               <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
@@ -217,9 +248,10 @@ function App() {
           )}
         </section>
       </main>
+      )}
 
       <footer className="border-t border-slate-800/80 py-6 text-center text-xs text-slate-600">
-        Singkap AI · Track 2: AI vs AI: Cyber Defense · Backend FastAPI + Classifier RoBERTa (BIPIA)
+        Singkap AI · Track 2: AI vs AI: Cyber Defense · Spotlighting + RoBERTa (BIPIA) + Heuristik Jailbreak
       </footer>
     </div>
   )

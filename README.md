@@ -42,6 +42,14 @@ uvicorn app.main:app --reload --port 8000
 ```
 - Health: `GET http://127.0.0.1:8000/health`
 - Analyze: `POST http://127.0.0.1:8000/api/analyze` body `{"content": "..."}`
+- Stats: `GET http://127.0.0.1:8000/api/stats` — analitik agregat (total, blocked, breakdown per sumber, rata-rata confidence/latency)
+- Logs: `GET http://127.0.0.1:8000/api/logs?limit=50&offset=0` — audit trail request terakhir
+
+### Analytics & Audit Log
+Setiap panggilan `/api/analyze` dicatat ke SQLite (`backend/singkap.db`, via SQLAlchemy):
+timestamp, preview input (dipotong 200 char) + hash SHA-256 (privacy-safe), verdict,
+confidence, `detection_source`, dan latency. Frontend menyediakan tab **Dashboard**
+(kartu statistik, bar chart breakdown sumber deteksi, dan tabel audit log).
 
 ### Frontend
 ```bash

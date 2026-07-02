@@ -1,7 +1,11 @@
+import hashlib
 import time
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
+from app.core.database import get_db
+from app.models.detection_log import DetectionLog
 from app.models.schemas import AnalyzeRequest, AnalyzeResponse
 from app.services.classifier import classify, get_device
 from app.services.jailbreak_heuristic import detect as detect_jailbreak
@@ -11,7 +15,7 @@ router = APIRouter()
 
 
 @router.post("/analyze", response_model=AnalyzeResponse)
-async def analyze(request: AnalyzeRequest) -> AnalyzeResponse:
+async def analyze(request: AnalyzeRequest, db: Session = Depends(get_db)) -> AnalyzeResponse:
     start = time.perf_counter()
 
     # Layer 1 — spotlighting preprocessing (provenance marking, display only).
@@ -46,6 +50,18 @@ async def analyze(request: AnalyzeRequest) -> AnalyzeResponse:
     label = "injection" if is_injection else "benign"
 
     latency_ms = round((time.perf_counter() - start) * 1000, 3)
+
+    # Persist to audit log (privacy-conscious: truncated preview + full-text hash).
+    log = DetectionLog(
+        input_preview=request.content[:200],
+        input_hash=hashlib.sha256(request.content.encode("utf-8")).hexdigest(),
+        is_injection=is_injection,
+        confidence=confidence,
+        detection_source=detection_source,
+        latency_ms=latency_ms,
+    )
+    db.add(log)
+    db.commit()
 
     return AnalyzeResponse(
         is_injection=is_injection,
