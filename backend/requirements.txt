@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+python-dotenv
+transformers
+# torch: install GPU build separately, e.g.
+#   pip install torch --index-url https://download.pytorch.org/whl/cu124
+torch
+requests
+httpx

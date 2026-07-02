@@ -1,0 +1,19 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+.env
+*.log
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# ML artifacts
+ml/models/
+ml/data/raw/
+ml/data/processed/
+
+# OS
+.DS_Store
+Thumbs.db
