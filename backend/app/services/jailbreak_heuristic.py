@@ -23,13 +23,27 @@ import re
 # imperative override / role-reset phrasing to minimize false positives.
 _RAW_PATTERNS: list[tuple[str, str]] = [
     # --- English: instruction override ---
-    (r"\bignore\s+(?:all\s+)?(?:the\s+)?(?:previous|prior|above|earlier)\s+(?:instructions?|prompts?|context|rules?)",
-     "ignore-previous-instructions"),
-    (r"\bdisregard\s+(?:all\s+)?(?:the\s+)?(?:previous|prior|above|earlier|any)\s+(?:instructions?|prompts?|context|rules?)",
-     "disregard-previous-instructions"),
-    (r"\bforget\s+(?:everything|all|your\s+instructions?|prior\s+context|previous\s+(?:instructions?|context))",
+    # Imperative "<verb> (all) (the) <previous-qualifier> <target-noun>". A
+    # temporal qualifier is always required so the target noun alone can't fire.
+    # Merges the former ignore- and disregard- patterns (identical structure) and
+    # widens the verb + target-noun synonym lists. Verbs are split by benign
+    # collocation risk:
+    #  - strong override verbs (ignore/disregard/disobey) rarely appear in benign
+    #    text with these nouns, so they also permit the looser "any" qualifier
+    #    (preserves the original disregard-pattern behaviour, e.g. "disregard any
+    #    instructions").
+    (r"\b(?:ignore|disregard|disobey)\s+(?:all\s+)?(?:the\s+)?(?:previous|prior|above|earlier|any)\s+(?:instructions?|prompts?|context|rules?|directives?|commands?|guidelines?|orders?)",
+     "instruction-override"),
+    #  - common verbs (cancel/scrap/drop/skip) occur frequently in ordinary text
+    #    ("skip any guidelines that don't apply"), so they require an explicit
+    #    temporal qualifier (no bare "any") and drop the commerce/technical-ambiguous
+    #    nouns "orders"/"commands" ("cancel all previous orders", "skip the previous
+    #    commands" are benign). The strong verbs above still cover those nouns.
+    (r"\b(?:cancel|scrap|drop|skip)\s+(?:all\s+)?(?:the\s+)?(?:previous|prior|above|earlier)\s+(?:instructions?|prompts?|context|rules?|directives?|guidelines?)",
+     "instruction-override"),
+    (r"\bforget\s+(?:everything|all|your\s+(?:instructions?|directives?|commands?|guidelines?|orders?)|prior\s+context|previous\s+(?:instructions?|context|directives?|commands?|guidelines?|orders?))",
      "forget-instructions"),
-    (r"\boverride\s+(?:all\s+)?(?:previous|prior|system)\s+(?:instructions?|rules?|settings?)",
+    (r"\boverride\s+(?:all\s+)?(?:previous|prior|system)\s+(?:instructions?|rules?|settings?|directives?|commands?|guidelines?|orders?)",
      "override-instructions"),
 
     # --- English: role / mode manipulation ---
